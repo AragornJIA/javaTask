@@ -3,12 +3,16 @@ package guang.springtask;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.*;
+
 @RestController
 @SpringBootApplication
+@Validated
 public class SpringtaskApplication {
 
     public static void main(String[] args) {
@@ -37,13 +41,30 @@ public class SpringtaskApplication {
             int times = Math.min(10, Integer.parseInt(n));
             var result = new StringBuilder();
             for (int i = 0; i < times; i++) {
-                result.append("hello").append("\n");
+                result.append("hello").append("<br>");
             }
             return result.toString();
         } catch (NumberFormatException e) {
             return "参数 n 必须是整型.";
-
         }
+    }
 
+    @RequestMapping("/insert")
+    public String insert(@RequestParam String name) {
+        String generated_id = "";
+        try (
+                Connection con = DriverManager.getConnection("jdbc:mysql://10.1.1.77:3306/javatask", "root", "root")) {
+            PreparedStatement stmt = con.prepareStatement("insert into test(name) values(?)", Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, name);
+            stmt.execute();
+            ResultSet rs = stmt.getGeneratedKeys();
+            while (rs.next()) {
+                generated_id = rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
+        }
+        return generated_id;
     }
 }
