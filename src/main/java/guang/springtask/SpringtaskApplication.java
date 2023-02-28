@@ -31,16 +31,16 @@ public class SpringtaskApplication {
     // 修改`/hello-x`：对参数 n 进行校验，如果 n 不是整数，应给出报错；当 n > 10 时，只输出 10 行 hello；
     @RequestMapping("/hello-x")
     public String hello_x(@RequestParam(defaultValue = "3") String n) {
-        try{
+        try {
             // 校验是否整型, 如果不是就返回提示
             // 如果输入的 n >10, 就输出 10 行
-            int times = Math.min(10,Integer.parseInt(n));
+            int times = Math.min(10, Integer.parseInt(n));
             var result = new StringBuilder();
             for (int i = 0; i < times; i++) {
-                result.append("hello").append("<br>");
+                result.append("hello").append("\n");
             }
             return result.toString();
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return "参数 n 必须是整型.";
 
         }
